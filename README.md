@@ -6,6 +6,11 @@ Template for InfraSight Labs code test. Includes kodtest-server which provides J
 
 Building is driven by Maven. Use Java 11.
 
-To compile and run tests:
+First run validate to install bundled kodtest-server into local repository:
 
-> mvn -s settings.xml test
+> mvn validate
+
+Then compile and run tests:
+
+> mvn test
+
