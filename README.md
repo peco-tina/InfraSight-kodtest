@@ -4,7 +4,7 @@ Template for InfraSight Labs code test. Includes kodtest-server which provides a
 
 ## Build & Test
 
-Building is driven by Maven. Use Java 11 when building with maven. Use JAVA_HOME to override which Java maven will use. Example in Windows:
+Building is driven by Maven (https://maven.apache.org.) Use Java 11 (https://adoptium.net/temurin/releases/?version=11) when building with maven. Use JAVA_HOME to override which Java maven will use. Example in Windows:
 
 > set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-11.0.17.8-hotspot
 
