@@ -52,7 +52,7 @@ public abstract class AbstractKodTest {
 			};
 		};
 		serverThread.start();
-		Thread.sleep(500);
+		Thread.sleep(250);
 
 		// Attempt to connect towards API endpoint until KodtestServer is up and running
 		for (int c = 0; c < 19; c++) {
@@ -64,12 +64,13 @@ public abstract class AbstractKodTest {
 			try {
 				con.connect();
 				con.getResponseCode();
-				if (con.getResponseCode() == 200) {
+				if (con.getResponseCode() == 200 || con.getResponseCode() == 401) {
 					serverUp = true;
 					System.out.println(serverThread.getName() + " seems to be up and responding on port " + PORT
 							+ ". Ready for test execution!");
 					return;
-				}
+				} else
+					Thread.sleep(500);
 			} catch (ConnectException e) {
 				Thread.sleep(500);
 				continue;
