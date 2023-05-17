@@ -82,6 +82,20 @@ public abstract class KodTest {
 	}
 
 	/**
+	 * @return Kodtest Server API user
+	 */
+	protected String getApiUser() {
+		return "apiUser";
+	}
+
+	/**
+	 * @return Kodtest Server API password
+	 */
+	protected String getApiPassword() {
+		return "apiPassword!";
+	}
+
+	/**
 	 * Tears down test environment by interrupting the thread running the Kodtest
 	 * API closing it down.
 	 */

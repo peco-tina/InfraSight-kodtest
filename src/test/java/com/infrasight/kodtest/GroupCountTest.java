@@ -21,6 +21,10 @@ public class GroupCountTest extends KodTest {
 	 * @return The number of groups retrieved from the Kodtest Server
 	 */
 	private int getGroupCount() {
+		// user & password to use for API authentication
+		final String apiUser = getApiUser();
+		final String apiPassword = getApiPassword();
+
 		// TODO: Get the actual value from the API
 		return 0;
 	}
