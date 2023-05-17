@@ -16,7 +16,7 @@ import okhttp3.OkHttpClient.Builder;
 /**
  * Foundation for all tests towards kodtest-server
  */
-public abstract class AbstractKodTest {
+public abstract class KodTest {
 
 	/** Port which Kodtest API is will run on */
 	private final static int PORT = 8080;

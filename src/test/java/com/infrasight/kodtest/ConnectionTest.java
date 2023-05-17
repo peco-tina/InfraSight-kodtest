@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class ConnectionTest extends AbstractKodTest {
+public class ConnectionTest extends KodTest {
 
 	/**
 	 * Simple test which asserts that the Kodtest API is up and running.
