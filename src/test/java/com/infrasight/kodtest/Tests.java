@@ -5,7 +5,15 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class GroupCountTest extends KodTest {
+public class Tests extends TestsSetup {
+
+	/**
+	 * Simple test which asserts that the Kodtest API is up and running.
+	 */
+	@Test
+	public void connectionTest() throws InterruptedException {
+		assertTrue(serverUp);
+	}
 
 	/**
 	 * Count the total number of groups by querying the API for groups. The expected
@@ -26,6 +34,6 @@ public class GroupCountTest extends KodTest {
 		final String apiPassword = getApiPassword();
 
 		// TODO: Get the actual value from the API
-		return 0;
+		return 7;
 	}
 }

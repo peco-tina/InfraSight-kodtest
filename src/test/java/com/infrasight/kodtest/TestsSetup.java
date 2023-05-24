@@ -16,7 +16,7 @@ import okhttp3.OkHttpClient.Builder;
 /**
  * Foundation for all tests towards kodtest-server
  */
-public abstract class KodTest {
+public abstract class TestsSetup {
 
 	/** Port which Kodtest API is will run on */
 	private final static int PORT = 8080;
@@ -48,7 +48,7 @@ public abstract class KodTest {
 		// Start thread which will run KodtestServer
 		serverThread = new Thread("Kodtest-server") {
 			public void run() {
-				new KodtestServer(PORT);
+				new KodtestServer(PORT, true);
 			};
 		};
 		serverThread.start();
@@ -56,7 +56,7 @@ public abstract class KodTest {
 
 		// Attempt to connect towards API endpoint until KodtestServer is up and running
 		for (int c = 0; c < 19; c++) {
-			HttpURLConnection con = (HttpURLConnection) new URI("http://localhost:" + PORT + "/accounts").toURL()
+			HttpURLConnection con = (HttpURLConnection) new URI("http://localhost:" + PORT + "/api/accounts").toURL()
 					.openConnection();
 			con.setRequestMethod("GET");
 			con.setConnectTimeout(5000);
