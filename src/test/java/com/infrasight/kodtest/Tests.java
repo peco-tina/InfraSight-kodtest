@@ -27,9 +27,43 @@ public class Tests extends TestsSetup {
 	 * number is seen in the final assert.
 	 */
 	@Test
-	public void countGroups() throws InterruptedException {
+	public void assignment1() throws InterruptedException {
 		assertTrue(serverUp);
-		assertEquals(7, getGroupCount());
+
+		/**
+		 * TODO: Add code to solve the first assignment, the correct answer is provided
+		 */
+
+		assertEquals(3, getGroupCount());
+	}
+
+	@Test
+	public void assignment2() throws InterruptedException {
+		assertTrue(serverUp);
+
+		/**
+		 * TODO: Add code to solve the second assignment, your answer shall be provided
+		 * in a assertEquals
+		 */
+	}
+
+	@Test
+	public void assignment3() throws InterruptedException {
+		assertTrue(serverUp);
+		/**
+		 * TODO: Add code to solve the third assignment, your answer shall be provided
+		 * in a assertEquals
+		 */
+	}
+
+	@Test
+	public void assignment4() throws InterruptedException {
+		assertTrue(serverUp);
+
+		/**
+		 * TODO: Add code to solve the fourth assignment, your answer shall be provided
+		 * in a assertEquals
+		 */
 	}
 
 	/**
