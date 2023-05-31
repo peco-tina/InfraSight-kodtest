@@ -15,26 +15,21 @@ import org.junit.Test;
 public class Tests extends TestsSetup {
 
 	/**
-	 * Simple test which asserts that the Kodtest API is up and running.
+	 * Simple example test which asserts that the Kodtest API is up and running.
 	 */
 	@Test
 	public void connectionTest() throws InterruptedException {
 		assertTrue(serverUp);
 	}
 
-	/**
-	 * Count the total number of groups by querying the API for groups. The expected
-	 * number is seen in the final assert.
-	 */
 	@Test
 	public void assignment1() throws InterruptedException {
 		assertTrue(serverUp);
 
 		/**
-		 * TODO: Add code to solve the first assignment, the correct answer is provided
+		 * TODO: Add code to solve the first assignment. Add Assert to show that you
+		 * found the account for Vera
 		 */
-
-		assertEquals(3, getGroupCount());
 	}
 
 	@Test
@@ -42,17 +37,26 @@ public class Tests extends TestsSetup {
 		assertTrue(serverUp);
 
 		/**
-		 * TODO: Add code to solve the second assignment, your answer shall be provided
-		 * in a assertEquals
+		 * TODO: Add code to solve the second assignment where we expect the number of
+		 * groups to be 3.
+		 */
+		int groupCount = 0;
+
+		// Assert which verifies the expected group count of 3
+		assertEquals(3, groupCount);
+
+		/**
+		 * TODO: Add Assert to verify the IDs of the groups found
 		 */
 	}
 
 	@Test
 	public void assignment3() throws InterruptedException {
 		assertTrue(serverUp);
+
 		/**
-		 * TODO: Add code to solve the third assignment, your answer shall be provided
-		 * in a assertEquals
+		 * TODO: Add code to solve the third assignment. Add Assert to verify the
+		 * expected number of groups. Add Assert to verify the IDs of the groups found.
 		 */
 	}
 
@@ -61,20 +65,18 @@ public class Tests extends TestsSetup {
 		assertTrue(serverUp);
 
 		/**
-		 * TODO: Add code to solve the fourth assignment, your answer shall be provided
-		 * in a assertEquals
+		 * TODO: Add code to solve the fourth assignment. Add Asserts to verify the
+		 * total salary requested
 		 */
 	}
 
-	/**
-	 * @return The number of groups retrieved from the Kodtest Server
-	 */
-	private int getGroupCount() {
-		// user & password to use for API authentication
-		final String apiUser = TestVariables.API_USER;
-		final String apiPassword = TestVariables.API_PASSWORD;
+	@Test
+	public void assignment5() throws InterruptedException {
+		assertTrue(serverUp);
 
-		// TODO: Get the actual value from the API
-		return 0;
+		/**
+		 * TODO: Add code to solve the fifth assignment. Add Asserts to verify the
+		 * managers requested
+		 */
 	}
 }
