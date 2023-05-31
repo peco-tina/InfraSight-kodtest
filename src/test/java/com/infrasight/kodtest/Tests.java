@@ -5,6 +5,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+/**
+ * Simple concrete class for JUnit tests with uses {@link TestsSetup} as a
+ * foundation for starting/stopping the API server for tests.
+ * 
+ * You may configure port, api user and api port in {@link TestVariables} if
+ * needed.
+ */
 public class Tests extends TestsSetup {
 
 	/**
@@ -30,8 +37,8 @@ public class Tests extends TestsSetup {
 	 */
 	private int getGroupCount() {
 		// user & password to use for API authentication
-		final String apiUser = getApiUser();
-		final String apiPassword = getApiPassword();
+		final String apiUser = TestVariables.API_USER;
+		final String apiPassword = TestVariables.API_PASSWORD;
 
 		// TODO: Get the actual value from the API
 		return 7;

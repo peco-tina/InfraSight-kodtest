@@ -15,12 +15,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
 
 /**
- * Foundation for all tests towards kodtest-server
+ * Foundation for all tests towards kodtest-server. There should be no reason to
+ * change anything here. Check {@link TestVariables} for configurable settings.
  */
 public abstract class TestsSetup {
-
-	/** Port which Kodtest API is will run on */
-	private final static int PORT = 8080;
 
 	/** Indicates if server is up and responding or not */
 	protected static boolean serverUp = false;
@@ -53,7 +51,8 @@ public abstract class TestsSetup {
 		final CountDownLatch latch = new CountDownLatch(1);
 		serverThread = new Thread("Kodtest-server") {
 			public void run() {
-				server = new KodtestServer(PORT, true);
+				server = new KodtestServer(TestVariables.API_PORT, true, TestVariables.API_USER,
+						TestVariables.API_PASSWORD);
 				server.start();
 				latch.countDown();
 				server.join();
@@ -65,18 +64,17 @@ public abstract class TestsSetup {
 
 		// Attempt to connect towards API endpoint until KodtestServer is up and running
 		for (int c = 0; c < 19; c++) {
-			HttpURLConnection con = (HttpURLConnection) new URI("http://localhost:" + PORT + "/api/accounts").toURL()
-					.openConnection();
+			HttpURLConnection con = (HttpURLConnection) new URI(
+					"http://localhost:" + TestVariables.API_PORT + "/api/accounts").toURL().openConnection();
 			con.setRequestMethod("GET");
 			con.setConnectTimeout(5000);
 			con.setReadTimeout(5000);
 			try {
 				con.connect();
-				con.getResponseCode();
 				if (con.getResponseCode() == 200 || con.getResponseCode() == 401) {
 					serverUp = true;
-					System.out.println(serverThread.getName() + " seems to be up and responding on port " + PORT
-							+ ". Ready for test execution!");
+					System.out.println(serverThread.getName() + " seems to be up and responding on port "
+							+ TestVariables.API_PORT + ". Ready for test execution!");
 					return;
 				} else
 					Thread.sleep(500);
@@ -87,21 +85,8 @@ public abstract class TestsSetup {
 		}
 
 		serverUp = false;
-		throw new RuntimeException(serverThread.getName() + " not responding on port " + PORT + " after 10 seconds");
-	}
-
-	/**
-	 * @return Kodtest Server API user
-	 */
-	protected String getApiUser() {
-		return "apiUser";
-	}
-
-	/**
-	 * @return Kodtest Server API password
-	 */
-	protected String getApiPassword() {
-		return "apiPassword!";
+		throw new RuntimeException(
+				serverThread.getName() + " not responding on port " + TestVariables.API_PORT + " after 10 seconds");
 	}
 
 	/**
