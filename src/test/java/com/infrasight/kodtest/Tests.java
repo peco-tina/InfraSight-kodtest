@@ -75,6 +75,6 @@ public class Tests extends TestsSetup {
 		final String apiPassword = TestVariables.API_PASSWORD;
 
 		// TODO: Get the actual value from the API
-		return 7;
+		return 0;
 	}
 }
