@@ -6,6 +6,9 @@ package com.infrasight.kodtest;
 public class RunServer {
 
 	public static void main(String[] args) {
-		new KodtestServer(args);
+		KodtestServer s = new KodtestServer(args);
+		s.start();
+		s.join();
+		s.shutdown();
 	}
 }
