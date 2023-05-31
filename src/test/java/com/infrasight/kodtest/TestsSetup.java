@@ -5,10 +5,11 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
@@ -22,10 +23,13 @@ public abstract class TestsSetup {
 	private final static int PORT = 8080;
 
 	/** Indicates if server is up and responding or not */
-	protected boolean serverUp = false;
+	protected static boolean serverUp = false;
 
 	/** Thread running the KodtestServer */
-	private Thread serverThread;
+	private static Thread serverThread;
+
+	/** Kodtest Server */
+	private static KodtestServer server;
 
 	/**
 	 * @return Builder for {@link OkHttpClient} which can be used for API access.
@@ -43,16 +47,21 @@ public abstract class TestsSetup {
 	 * specific API endpoint. Returns when server is responding throws exception
 	 * after ~10 seconds if the server is not responding.
 	 */
-	@Before
-	public void setup() throws InterruptedException, IOException, URISyntaxException {
+	@BeforeClass
+	public static void setup() throws InterruptedException, IOException, URISyntaxException {
 		// Start thread which will run KodtestServer
+		final CountDownLatch latch = new CountDownLatch(1);
 		serverThread = new Thread("Kodtest-server") {
 			public void run() {
-				new KodtestServer(PORT, true);
+				server = new KodtestServer(PORT, true);
+				server.start();
+				latch.countDown();
+				server.join();
 			};
 		};
 		serverThread.start();
-		Thread.sleep(250);
+		// Wait until server is up
+		latch.await();
 
 		// Attempt to connect towards API endpoint until KodtestServer is up and running
 		for (int c = 0; c < 19; c++) {
@@ -99,10 +108,11 @@ public abstract class TestsSetup {
 	 * Tears down test environment by interrupting the thread running the Kodtest
 	 * API closing it down.
 	 */
-	@After
-	public void teardown() throws InterruptedException {
-		serverUp = false;
+	@AfterClass
+	public static void teardownOnce() throws InterruptedException {
+		server.shutdown();
 		serverThread.interrupt();
 		serverThread.join();
+		serverUp = false;
 	}
 }
