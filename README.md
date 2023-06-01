@@ -77,5 +77,13 @@ If needed, change the default parameters used for tests in `com.infrasight.kodte
 	- The API user used for auth (default: apiUser)
 - API_PASSWORD
 	- The API password used for auth (default: apiPassword!)
+
+## Submitting
 	
-We expect that you submit your solutions as JUnit tests which we can evaluate by running `mvn test`.
+We expect that you submit your solutions as JUnit tests which we can evaluate by running `mvn test`. In `com.infrasight.kodtest.Tests` we have prepared methods 'assignmentX' which correspond to the assignments you are expected to solve. These are already annotated with @Test and will be run by `mvn test`.
+
+You are free to implement your solutions as you want but please provide instructions on how to run them.
+
+Submit your maven project with your solutions either through a git-repository to which we have access or just mail us the zipped project.
+
+Good luck!
