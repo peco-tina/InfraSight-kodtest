@@ -46,8 +46,10 @@ mvn validate compile
 Then start Kodtest API:
 
 ```
-mvn exec:java -Dexec.args="--port=8080 --apiUser=apiUser --apiPassword=apiPassword!"
+mvn exec:java -D"exec.args"="--port=8081 --apiUser=apiUser --apiPassword=apiPassword!"
 ```
+
+The above syntax should work in Windows cmd/powershell and bash.
 
 Access the API documentation by browsing to <b>http://localhost:port</b>. When running Kodtest API manually it may interfere with the server started by the tests so make sure you run them on different ports. You can change the port with option <b>port</b>.
 
