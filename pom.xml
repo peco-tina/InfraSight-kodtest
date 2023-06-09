@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.infrasight</groupId>
 	<artifactId>kodtest-template</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>kodtest-template</name>
 	<description>Code test template for InfraSight Labs</description>
 	<organization>
@@ -13,6 +13,7 @@
 	<inceptionYear>2023</inceptionYear>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<kodtestserver.version>1.0.1</kodtestserver.version>
 	</properties>
 	<build>
 		<plugins>
@@ -21,7 +22,7 @@
 			    <artifactId>maven-install-plugin</artifactId>
 			    <version>3.1.1</version>
 			        <configuration>
-						<file>${basedir}/lib/kodtest-server-1.0.0.jar</file>
+						<file>${basedir}/lib/kodtest-server-${kodtestserver.version}.jar</file>
 						<generatePom>false</generatePom>
 			        </configuration>
 			    <executions>
@@ -86,7 +87,7 @@
 		<dependency>
 			<groupId>com.infrasight</groupId>
 			<artifactId>kodtest-server</artifactId>
-			<version>1.0.0</version>
+			<version>${kodtestserver.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
