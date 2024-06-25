@@ -3,6 +3,7 @@ package com.infrasight.kodtest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.infrasight.kodtest.service.AccountService;
 import org.junit.Test;
 
 /**
@@ -24,7 +25,10 @@ public class Tests extends TestsSetup {
 
 	@Test
 	public void assignment1() throws InterruptedException {
+		String employeeId = "1337";
+		AccountService accountService = new AccountService();
 		assertTrue(serverUp);
+		accountService.findAccountById(getHttpClientBuilder(), employeeId);
 
 		/**
 		 * TODO: Add code to solve the first assignment. Add Assert to show that you
