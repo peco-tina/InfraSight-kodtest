@@ -3,7 +3,10 @@ package com.infrasight.kodtest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.infrasight.kodtest.model.Account;
 import com.infrasight.kodtest.service.AccountService;
+import com.infrasight.kodtest.service.AuthenticationService;
+import okhttp3.OkHttpClient;
 import org.junit.Test;
 
 /**
@@ -14,6 +17,9 @@ import org.junit.Test;
  * needed.
  */
 public class Tests extends TestsSetup {
+	AuthenticationService authenticationService = new AuthenticationService();
+	OkHttpClient okHttpClient = getHttpClientBuilder().build();
+	AccountService accountService = new AccountService(okHttpClient);
 
 	/**
 	 * Simple example test which asserts that the Kodtest API is up and running.
@@ -21,15 +27,19 @@ public class Tests extends TestsSetup {
 	@Test
 	public void connectionTest() throws InterruptedException {
 		assertTrue(serverUp);
+		configure();
+	}
+
+	public void configure(){
+		authenticationService.getBearerToken(okHttpClient);
 	}
 
 	@Test
 	public void assignment1() throws InterruptedException {
-		String employeeId = "1337";
-		AccountService accountService = new AccountService();
 		assertTrue(serverUp);
-		accountService.findAccountById(getHttpClientBuilder(), employeeId);
-
+		String employeeId = "1337";
+		Account account = accountService.findAccountById(employeeId);
+		assertEquals("Vera", account.getFirstName());
 		/**
 		 * TODO: Add code to solve the first assignment. Add Assert to show that you
 		 * found the account for Vera
