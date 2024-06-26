@@ -40,10 +40,7 @@ public class Tests extends TestsSetup {
 		String employeeId = "1337";
 		Account account = accountService.findAccountById(employeeId);
 		assertEquals("Vera", account.getFirstName());
-		/**
-		 * TODO: Add code to solve the first assignment. Add Assert to show that you
-		 * found the account for Vera
-		 */
+		assertEquals("Scope", account.getLastName());
 	}
 
 	@Test

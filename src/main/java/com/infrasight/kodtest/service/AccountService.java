@@ -7,7 +7,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
-import java.net.http.HttpClient;
 
 public class AccountService {
     private OkHttpClient client;
