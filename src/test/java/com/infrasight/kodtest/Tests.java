@@ -4,8 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.infrasight.kodtest.model.Account;
+import com.infrasight.kodtest.model.Relationship;
 import com.infrasight.kodtest.service.AccountService;
 import com.infrasight.kodtest.service.AuthenticationService;
+import com.infrasight.kodtest.service.RelationshipService;
 import okhttp3.OkHttpClient;
 import org.junit.Test;
 
@@ -20,6 +22,7 @@ public class Tests extends TestsSetup {
 	AuthenticationService authenticationService = new AuthenticationService();
 	OkHttpClient okHttpClient = getHttpClientBuilder().build();
 	AccountService accountService = new AccountService(okHttpClient);
+	RelationshipService relationshipService = new RelationshipService(okHttpClient);
 
 	/**
 	 * Simple example test which asserts that the Kodtest API is up and running.
@@ -46,19 +49,13 @@ public class Tests extends TestsSetup {
 	@Test
 	public void assignment2() throws InterruptedException {
 		assertTrue(serverUp);
+		String memberId = "vera_scope";
+		Relationship [] relationships = relationshipService.getAllRelationshipsByMemberId(memberId);
 
-		/**
-		 * TODO: Add code to solve the second assignment where we expect the number of
-		 * groups to be 3.
-		 */
-		int groupCount = 0;
-
-		// Assert which verifies the expected group count of 3
-		assertEquals(3, groupCount);
-
-		/**
-		 * TODO: Add Assert to verify the IDs of the groups found
-		 */
+		assertEquals(3, relationships.length);
+		assertEquals("grp_köpenhamn", relationships[0].getGroupId());
+		assertEquals("grp_malmo", relationships[1].getGroupId());
+		assertEquals("grp_itkonsulter", relationships[2].getGroupId());
 	}
 
 	@Test
