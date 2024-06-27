@@ -44,8 +44,6 @@ public class RelationshipService {
             if(!processedGroupIds.contains(relationship.getGroupId())){ //if the groupId is not already used in the search "processed"
                 newRelationships.addAll(getAllRelationshipsByMemberId(relationship.getGroupId()));
                 processedGroupIds.add(relationship.getGroupId());
-            } else {
-                continue;
             }
         }
 
