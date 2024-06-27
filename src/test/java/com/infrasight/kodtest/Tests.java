@@ -9,7 +9,11 @@ import com.infrasight.kodtest.service.AccountService;
 import com.infrasight.kodtest.service.AuthenticationService;
 import com.infrasight.kodtest.service.RelationshipService;
 import okhttp3.OkHttpClient;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Simple concrete class for JUnit tests with uses {@link TestsSetup} as a
@@ -19,10 +23,11 @@ import org.junit.Test;
  * needed.
  */
 public class Tests extends TestsSetup {
-	AuthenticationService authenticationService = new AuthenticationService();
-	OkHttpClient okHttpClient = getHttpClientBuilder().build();
-	AccountService accountService = new AccountService(okHttpClient);
-	RelationshipService relationshipService = new RelationshipService(okHttpClient);
+	private static AuthenticationService authenticationService = new AuthenticationService();
+	private static OkHttpClient okHttpClient = getHttpClientBuilder().build();
+	private static AccountService accountService = new AccountService(okHttpClient);
+	private static RelationshipService relationshipService = new RelationshipService(okHttpClient);
+	private static List<Relationship> allRelationships;
 
 	/**
 	 * Simple example test which asserts that the Kodtest API is up and running.
@@ -30,11 +35,12 @@ public class Tests extends TestsSetup {
 	@Test
 	public void connectionTest() throws InterruptedException {
 		assertTrue(serverUp);
-		configure();
 	}
 
-	public void configure(){
+	@BeforeClass
+	public static void configure(){
 		authenticationService.getBearerToken(okHttpClient);
+		allRelationships = new ArrayList<>();
 	}
 
 	@Test
@@ -50,22 +56,30 @@ public class Tests extends TestsSetup {
 	public void assignment2() throws InterruptedException {
 		assertTrue(serverUp);
 		String memberId = "vera_scope";
-		Relationship [] relationships = relationshipService.getAllRelationshipsByMemberId(memberId);
+		allRelationships.addAll(relationshipService.getAllRelationshipsByMemberId(memberId));
 
-		assertEquals(3, relationships.length);
-		assertEquals("grp_köpenhamn", relationships[0].getGroupId());
-		assertEquals("grp_malmo", relationships[1].getGroupId());
-		assertEquals("grp_itkonsulter", relationships[2].getGroupId());
+		assertEquals(3, allRelationships.size());
+		assertEquals("grp_köpenhamn", allRelationships.get(0).getGroupId());
+		assertEquals("grp_malmo", allRelationships.get(1).getGroupId());
+		assertEquals("grp_itkonsulter", allRelationships.get(2).getGroupId());
 	}
 
 	@Test
 	public void assignment3() throws InterruptedException {
 		assertTrue(serverUp);
+		List<String> processedGroupIds = new ArrayList<>();
+		allRelationships = relationshipService.getAllRelationshipsByMemberIds(allRelationships, processedGroupIds);
 
-		/**
-		 * TODO: Add code to solve the third assignment. Add Assert to verify the
-		 * expected number of groups. Add Assert to verify the IDs of the groups found.
-		 */
+		assertEquals(9, allRelationships.size());
+		assertEquals(allRelationships.get(0).getGroupId(), ("grp_köpenhamn"));
+		assertEquals(allRelationships.get(1).getGroupId(), ("grp_malmo"));
+		assertEquals(allRelationships.get(2).getGroupId(), ("grp_itkonsulter"));
+		assertEquals(allRelationships.get(3).getGroupId(), ("grp_danmark"));
+		assertEquals(allRelationships.get(4).getGroupId(), ("grp_sverige"));
+		assertEquals(allRelationships.get(5).getGroupId(), ("grp_inhyrda"));
+		assertEquals(allRelationships.get(6).getGroupId(), ("grp_chokladfabrik"));
+		assertEquals(allRelationships.get(7).getGroupId(), ("grp_choklad"));
+		assertEquals(allRelationships.get(8).getGroupId(), ("grp_konfektyr"));
 	}
 
 	@Test

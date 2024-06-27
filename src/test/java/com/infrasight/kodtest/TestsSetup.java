@@ -33,7 +33,7 @@ public abstract class TestsSetup {
 	 * @return Builder for {@link OkHttpClient} which can be used for API access.
 	 *         Comes configured with 5 second timeouts for read and connect.
 	 */
-	protected Builder getHttpClientBuilder() {
+	protected static Builder getHttpClientBuilder() {
 		okhttp3.OkHttpClient.Builder builder = new OkHttpClient.Builder();
 		builder = builder.readTimeout(5, TimeUnit.SECONDS);
 		builder = builder.connectTimeout(5, TimeUnit.SECONDS);

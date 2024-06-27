@@ -29,7 +29,7 @@ public class AccountService {
                 Gson gson = new Gson();
                 Account[] accounts = gson.fromJson(responseBody, Account[].class);
                 if (accounts.length > 0) {
-                    Account account = accounts[0];
+                    Account account = accounts[0]; //due to unique search, we chose index 0
                     return account;
                 }
             } else {
