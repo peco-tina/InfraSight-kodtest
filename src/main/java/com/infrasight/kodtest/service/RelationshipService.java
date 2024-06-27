@@ -15,22 +15,13 @@ public class RelationshipService {
         this.client = okHttpClient;
     }
 
-    public List<Relationship> getAllRelationshipsByMemberId(String memberId){
-        String url = "http://localhost:8080/api/relationships?filter=memberId%3D" + memberId;
-        List<Relationship> allRelationships = new ArrayList<>();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", "Bearer " + AuthenticationService.bearerToken)
-                .build();
+    public List<Relationship> getRelationships(String memberId, String groupId, String skip){
+        String url = buildUrl(memberId, groupId, skip);
+        Request request = buildRequest(url);
 
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful()) {
-                String responseBody = response.body().string();
-                Gson gson = new Gson();
-                Relationship[] relationshipsArray = gson.fromJson(responseBody, Relationship[].class); // parse all members in array from JSON
-                allRelationships.addAll(Arrays.asList(relationshipsArray));
-                return allRelationships;
+                return parseJsonToList(response);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -42,7 +33,7 @@ public class RelationshipService {
         List<Relationship> newRelationships = new ArrayList<>();
         for (Relationship relationship : relationships) {
             if(!processedGroupIds.contains(relationship.getGroupId())){ //if the groupId is not already used in the search "processed"
-                newRelationships.addAll(getAllRelationshipsByMemberId(relationship.getGroupId()));
+                newRelationships.addAll(getRelationships(relationship.getGroupId(), null, null));
                 processedGroupIds.add(relationship.getGroupId());
             }
         }
@@ -70,5 +61,92 @@ public class RelationshipService {
             getAllRelationshipsByMemberIds(relationships, processedGroupIds); // we call this method until all groupIds are processed, until all group that are member in other groups are found
         }
         return relationships;
+    }
+
+    private String buildUrl(String memberId, String groupId, String skip) {
+        String url = "http://localhost:8080/api/relationships?filter=";
+        if(memberId!=null){
+            url += "memberId%3D" + memberId;
+        }
+
+        if(groupId!=null){
+            url += "groupId%3D" + groupId;
+        }
+
+        if(skip!=null){
+            url += "&skip=" + skip;
+        }
+        return url;
+    }
+
+    private Request buildRequest(String url) {
+        return new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + AuthenticationService.bearerToken)
+                .build();
+    }
+
+    private List<Relationship> parseJsonToList(Response response) throws IOException{
+        List<Relationship> allRelationships = new ArrayList<>();
+        String responseBody = response.body().string();
+        Gson gson = new Gson();
+        Relationship[] relationshipsArray = gson.fromJson(responseBody, Relationship[].class); // parse all results to array from JSON
+        allRelationships.addAll(Arrays.asList(relationshipsArray));
+        return allRelationships;
+    }
+
+    public Collection<String> getAllMembersID(String groupId, List<String> ids, List<String> subGroupsIds) {
+        List<Relationship> allRelationships = new ArrayList<>();
+        List<String> subGroups = new ArrayList<>();
+        List<String> memberIds = new ArrayList<>();
+
+        if(ids != null){
+            memberIds.addAll(ids);
+        }
+        if(subGroupsIds != null){
+            subGroups.addAll(subGroupsIds);
+        }
+
+        boolean isListSizeChanged = true;
+        int skipCounter = 0;
+        int listSize = 0;
+        int previousListSize = 0;
+
+        do{
+            String skip = new Integer(skipCounter).toString();
+            allRelationships.addAll(getRelationships(null, groupId, skip));
+            previousListSize = listSize;
+            skipCounter += 50;
+            listSize = allRelationships.size();
+
+            if(previousListSize == listSize){
+                isListSizeChanged = false;
+            }
+
+        } while (isListSizeChanged);
+
+        for(Relationship relationship : allRelationships){
+            if(!relationship.getMemberId().substring(0,3).equals("acc") && !relationship.getMemberId().equals("vera_scope")){
+                subGroups.add(relationship.getMemberId());
+            } else {
+                memberIds.add(relationship.getMemberId());
+            }
+        }
+
+        for (String subGroupId : subGroups) {
+            List<String> temporarySubGroups = new ArrayList<>();
+            temporarySubGroups.addAll(subGroups);
+            temporarySubGroups.remove(0);
+            memberIds.addAll(getAllMembersID(subGroupId, memberIds, temporarySubGroups));
+        }
+
+        memberIds = removeDuplicate(memberIds);
+
+        return memberIds;
+    }
+
+    private List<String> removeDuplicate(List<String> memberIds) {
+        Set<String> set = new HashSet<>(memberIds);
+        return new ArrayList<>(set);
     }
 }

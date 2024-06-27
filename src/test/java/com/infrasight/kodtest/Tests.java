@@ -1,5 +1,6 @@
 package com.infrasight.kodtest;
 
+import static com.infrasight.kodtest.TestsSetup.getHttpClientBuilder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -9,6 +10,7 @@ import com.infrasight.kodtest.service.AccountService;
 import com.infrasight.kodtest.service.AuthenticationService;
 import com.infrasight.kodtest.service.RelationshipService;
 import okhttp3.OkHttpClient;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -55,8 +57,7 @@ public class Tests extends TestsSetup {
 	@Test
 	public void assignment2() throws InterruptedException {
 		assertTrue(serverUp);
-		String memberId = "vera_scope";
-		allRelationships.addAll(relationshipService.getAllRelationshipsByMemberId(memberId));
+		allRelationships.addAll(relationshipService.getRelationships("vera_scope", null, null));
 
 		assertEquals(3, allRelationships.size());
 		assertEquals("grp_köpenhamn", allRelationships.get(0).getGroupId());
@@ -85,6 +86,12 @@ public class Tests extends TestsSetup {
 	@Test
 	public void assignment4() throws InterruptedException {
 		assertTrue(serverUp);
+		List<String> membersId = new ArrayList<>();
+		membersId.addAll(relationshipService.getAllMembersID("grp_inhyrda", null, null));
+
+		for(String r : membersId){
+			System.out.println(r);
+		}
 
 		/**
 		 * TODO: Add code to solve the fourth assignment. Add Asserts to verify the
