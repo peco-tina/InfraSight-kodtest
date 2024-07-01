@@ -15,7 +15,7 @@ public class RelationshipService {
         this.client = okHttpClient;
     }
 
-    public List<Relationship> getRelationships(String memberId, String groupId, String skip){
+    public List<Relationship> getRelationships(String memberId, String groupId, String skip) throws InterruptedException {
         String url = buildUrl(memberId, groupId, skip);
         Request request = buildRequest(url);
 
@@ -29,7 +29,7 @@ public class RelationshipService {
         return null;
     }
 
-    public List<Relationship> getAllRelationshipsByMemberIds(List<Relationship> relationships, List<String> processedGroupIds) {
+    public List<Relationship> getAllRelationshipsByMemberIds(List<Relationship> relationships, List<String> processedGroupIds) throws InterruptedException {
         List<Relationship> newRelationships = new ArrayList<>();
         for (Relationship relationship : relationships) {
             if(!processedGroupIds.contains(relationship.getGroupId())){ //if the groupId is not already used in the search "processed"
@@ -95,7 +95,7 @@ public class RelationshipService {
         return allRelationships;
     }
 
-    public Collection<String> getAllMembersID(String groupId, List<String> ids, List<String> subGroupsIds) {
+    public Collection<String> getAllMembersID(String groupId, List<String> ids, List<String> subGroupsIds) throws InterruptedException {
         List<Relationship> allRelationships = new ArrayList<>();
         List<String> subGroups = new ArrayList<>();
         List<String> memberIds = new ArrayList<>();

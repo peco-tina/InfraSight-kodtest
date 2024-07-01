@@ -13,7 +13,7 @@ public class AuthenticationService {
     public void getBearerToken(OkHttpClient client) {
         JsonObject json = new JsonObject();
         json.addProperty("user", "apiUser");
-        json.addProperty("password", "apiPassword");
+        json.addProperty("password", "apiPassword!");
 
         String jsonString = json.toString();
         System.out.println(jsonString);

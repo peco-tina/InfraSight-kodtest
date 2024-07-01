@@ -15,7 +15,7 @@ public class AccountService {
         this.client = client;
     }
 
-    public Account findAccountById(String employeeId) {
+    public Account findAccountById(String employeeId) throws InterruptedException {
         String url = "http://localhost:8080/api/accounts?filter=employeeId=" + employeeId;
 
         Request request = new Request.Builder()

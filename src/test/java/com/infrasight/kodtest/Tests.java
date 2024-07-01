@@ -1,6 +1,5 @@
 package com.infrasight.kodtest;
 
-import static com.infrasight.kodtest.TestsSetup.getHttpClientBuilder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -10,7 +9,6 @@ import com.infrasight.kodtest.service.AccountService;
 import com.infrasight.kodtest.service.AuthenticationService;
 import com.infrasight.kodtest.service.RelationshipService;
 import okhttp3.OkHttpClient;
-import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -25,10 +23,10 @@ import java.util.List;
  * needed.
  */
 public class Tests extends TestsSetup {
-	private static AuthenticationService authenticationService = new AuthenticationService();
-	private static OkHttpClient okHttpClient = getHttpClientBuilder().build();
-	private static AccountService accountService = new AccountService(okHttpClient);
-	private static RelationshipService relationshipService = new RelationshipService(okHttpClient);
+	private static final AuthenticationService authenticationService = new AuthenticationService();
+	private static final OkHttpClient okHttpClient = getHttpClientBuilder().build();
+	private static final AccountService accountService = new AccountService(okHttpClient);
+	private static final RelationshipService relationshipService = new RelationshipService(okHttpClient);
 	private static List<Relationship> allRelationships;
 
 	/**
