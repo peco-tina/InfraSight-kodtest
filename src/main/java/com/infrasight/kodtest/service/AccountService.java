@@ -37,7 +37,7 @@ public class AccountService {
                     Gson gson = new Gson();
                     Account[] accounts = gson.fromJson(responseBody, Account[].class);
                     if (accounts.length > 0) {
-                        Account account = accounts[0]; // zbog jedinstvene pretrage, biramo indeks 0
+                        Account account = accounts[0]; // due to unique search, we choose index 0
                         return account;
                     }
                 } else if (response.code() == 429) {
