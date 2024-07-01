@@ -7,6 +7,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class AccountService {
     private OkHttpClient client;
@@ -15,8 +18,8 @@ public class AccountService {
         this.client = client;
     }
 
-    public Account findAccountById(String employeeId) throws InterruptedException {
-        String url = "http://localhost:8080/api/accounts?filter=employeeId=" + employeeId;
+    public Account findAccountById(String employeeId, String accountId) throws InterruptedException {
+        String url = buildUrl(employeeId, accountId);
 
         Request request = new Request.Builder()
                 .url(url)
@@ -39,5 +42,26 @@ public class AccountService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Collection<? extends Account> getAllAccountsById(List<String> accountsId) throws InterruptedException {
+        List<Account> accounts = new ArrayList<>();
+        for(String accountId : accountsId){
+            accounts.add(findAccountById(null,accountId));
+        }
+        return accounts;
+    }
+
+    private String buildUrl(String employeeId, String accountId) {
+        String url = "http://localhost:8080/api/accounts?filter=";
+
+        if(employeeId != null){
+            url += "employeeId=" + employeeId;
+        }
+
+        if(accountId != null){
+            url += "id=" + accountId;
+        }
+        return url;
     }
 }

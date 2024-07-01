@@ -47,7 +47,7 @@ public class Tests extends TestsSetup {
 	public void assignment1() throws InterruptedException {
 		assertTrue(serverUp);
 		String employeeId = "1337";
-		Account account = accountService.findAccountById(employeeId);
+		Account account = accountService.findAccountById(employeeId, null);
 		assertEquals("Vera", account.getFirstName());
 		assertEquals("Scope", account.getLastName());
 	}
@@ -85,12 +85,12 @@ public class Tests extends TestsSetup {
 	public void assignment4() throws InterruptedException {
 		assertTrue(serverUp);
 		List<String> membersId = new ArrayList<>();
+		List<Account> accounts = new ArrayList<>();
 		membersId.addAll(relationshipService.getAllMembersID("grp_inhyrda", null, null));
+		accounts.addAll(accountService.getAllAccountsById(membersId));
 
-		for(String r : membersId){
-			System.out.println(r);
-		}
 		System.out.println(membersId.size());
+		System.out.println(accounts.size());
 
 		/**
 		 * TODO: Add code to solve the fourth assignment. Add Asserts to verify the
