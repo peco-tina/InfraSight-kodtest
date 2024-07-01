@@ -13,9 +13,9 @@ public class Account {
     private int salary;
     private int age;
     private String computerModel;
-    private int employeedSince;
+    private int employedSince;
     private String foodPreference;
-    private String salaryCurency;
+    private String salaryCurrency;
 
     public String getObjectType() {
         return objectType;
@@ -113,12 +113,12 @@ public class Account {
         this.computerModel = computerModel;
     }
 
-    public int getEmployeedSince() {
-        return employeedSince;
+    public int getEmployedSince() {
+        return employedSince;
     }
 
-    public void setEmployeedSince(int employeedSince) {
-        this.employeedSince = employeedSince;
+    public void setEmployeedSince(int employedSince) {
+        this.employedSince = employedSince;
     }
 
     public String getFoodPreference() {
@@ -129,11 +129,11 @@ public class Account {
         this.foodPreference = foodPreference;
     }
 
-    public String getSalaryCurency() {
-        return salaryCurency;
+    public String getSalaryCurrency() {
+        return salaryCurrency;
     }
 
-    public void setSalaryCurency(String salaryCurency) {
-        this.salaryCurency = salaryCurency;
+    public void setSalaryCurrency(String salaryCurrency) {
+        this.salaryCurrency = salaryCurrency;
     }
 }
