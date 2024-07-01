@@ -33,8 +33,11 @@ public class RelationshipService {
         List<Relationship> newRelationships = new ArrayList<>();
         for (Relationship relationship : relationships) {
             if(!processedGroupIds.contains(relationship.getGroupId())){ //if the groupId is not already used in the search "processed"
-                newRelationships.addAll(getRelationships(relationship.getGroupId(), null, null));
-                processedGroupIds.add(relationship.getGroupId());
+                List<Relationship> tempRelationships = getRelationships(relationship.getGroupId(), null, null);
+                if(tempRelationships != null){
+                    newRelationships.addAll(tempRelationships);
+                    processedGroupIds.add(relationship.getGroupId());
+                }
             }
         }
 
