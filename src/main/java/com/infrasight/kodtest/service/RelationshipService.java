@@ -114,7 +114,10 @@ public class RelationshipService {
 
         do{
             String skip = new Integer(skipCounter).toString();
-            allRelationships.addAll(getRelationships(null, groupId, skip));
+            List<Relationship> relationships = getRelationships(null, groupId, skip);
+            if(relationships != null){
+                allRelationships.addAll(relationships);
+            }
             previousListSize = listSize;
             skipCounter += 50;
             listSize = allRelationships.size();

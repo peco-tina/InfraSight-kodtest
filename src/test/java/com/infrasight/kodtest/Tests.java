@@ -90,6 +90,7 @@ public class Tests extends TestsSetup {
 		for(String r : membersId){
 			System.out.println(r);
 		}
+		System.out.println(membersId.size());
 
 		/**
 		 * TODO: Add code to solve the fourth assignment. Add Asserts to verify the
