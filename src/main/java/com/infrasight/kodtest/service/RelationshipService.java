@@ -8,6 +8,7 @@ import okhttp3.Response;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class RelationshipService {
     private OkHttpClient client;
@@ -15,16 +16,30 @@ public class RelationshipService {
         this.client = okHttpClient;
     }
 
+    private static final int MAX_RETRIES = 5;
+    private static final double BACKOFF_FACTOR = 0.5;
     public List<Relationship> getRelationships(String memberId, String groupId, String skip) throws InterruptedException {
         String url = buildUrl(memberId, groupId, skip);
         Request request = buildRequest(url);
 
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                return parseJsonToList(response);
+        int retries = 0;
+        while (retries < MAX_RETRIES) {
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    return parseJsonToList(response);
+                } else if (response.code() == 429) {
+                    retries++;
+                    double sleepTime = BACKOFF_FACTOR * Math.pow(2, retries);
+                    System.out.println("Rate limit exceeded. Retrying in " + sleepTime + " seconds...");
+                    TimeUnit.SECONDS.sleep((long) sleepTime);
+                } else {
+                    System.out.println("Request failed with status code: " + response.code());
+                    break;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                break;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return null;
     }

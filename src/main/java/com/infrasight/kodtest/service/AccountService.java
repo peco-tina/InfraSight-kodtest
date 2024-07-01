@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class AccountService {
     private OkHttpClient client;
@@ -18,6 +19,8 @@ public class AccountService {
         this.client = client;
     }
 
+    private static final int MAX_RETRIES = 5;
+    private static final double BACKOFF_FACTOR = 0.5;
     public Account findAccountById(String employeeId, String accountId) throws InterruptedException {
         String url = buildUrl(employeeId, accountId);
 
@@ -26,20 +29,30 @@ public class AccountService {
                 .addHeader("Authorization", "Bearer " + AuthenticationService.bearerToken)
                 .build();
 
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                String responseBody = response.body().string();
-                Gson gson = new Gson();
-                Account[] accounts = gson.fromJson(responseBody, Account[].class);
-                if (accounts.length > 0) {
-                    Account account = accounts[0]; //due to unique search, we chose index 0
-                    return account;
+        int retries = 0;
+        while (retries < MAX_RETRIES) {
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    Gson gson = new Gson();
+                    Account[] accounts = gson.fromJson(responseBody, Account[].class);
+                    if (accounts.length > 0) {
+                        Account account = accounts[0]; // zbog jedinstvene pretrage, biramo indeks 0
+                        return account;
+                    }
+                } else if (response.code() == 429) {
+                    retries++;
+                    double sleepTime = BACKOFF_FACTOR * Math.pow(2, retries);
+                    System.out.println("Rate limit exceeded. Retrying in " + sleepTime + " seconds...");
+                    TimeUnit.SECONDS.sleep((long) sleepTime);
+                } else {
+                    System.out.println("Request failed with status code: " + response.code());
+                    break;
                 }
-            } else {
-                System.out.println("Request failed with status code: " + response.code());
+            } catch (IOException e) {
+                e.printStackTrace();
+                break;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return null;
     }
