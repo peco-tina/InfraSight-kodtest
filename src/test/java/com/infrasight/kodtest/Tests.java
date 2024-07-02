@@ -13,7 +13,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Simple concrete class for JUnit tests with uses {@link TestsSetup} as a
@@ -84,18 +86,17 @@ public class Tests extends TestsSetup {
 	@Test
 	public void assignment4() throws InterruptedException {
 		assertTrue(serverUp);
-		List<String> membersId = new ArrayList<>();
-		List<Account> accounts = new ArrayList<>();
-		membersId.addAll(relationshipService.getAllMembersID("grp_inhyrda", null, null));
-		accounts.addAll(accountService.getAllAccountsById(membersId));
+		List<String> membersId = new ArrayList<>(relationshipService.getAllMembersID("grp_inhyrda", null, null));
+		List<Account> accounts = new ArrayList<>(accountService.getAllAccountsById(membersId));
+		Map<String, Long> salaries = new HashMap<>(accountService.calculateSalaries(accounts));
 
-		System.out.println(membersId.size());
-		System.out.println(accounts.size());
+		long totalSalariesInSEK = salaries.get("SEK");
+		long totalSalariesInDKK = salaries.get("DKK");
+		long totalSalariesInEUR = salaries.get("EUR");
 
-		/**
-		 * TODO: Add code to solve the fourth assignment. Add Asserts to verify the
-		 * total salary requested
-		 */
+		assertEquals(16029792, totalSalariesInSEK);
+		assertEquals(1843283, totalSalariesInDKK);
+		assertEquals(535726, totalSalariesInEUR);
 	}
 
 	@Test

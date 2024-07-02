@@ -16,14 +16,14 @@ public class RelationshipService {
         this.client = okHttpClient;
     }
 
-    private static final int MAX_RETRIES = 5;
+    private static final int MAX_RETRIES = 5; // number of allowed attempts of calling the API. Can be increased
     private static final double BACKOFF_FACTOR = 0.5;
     public List<Relationship> getRelationships(String memberId, String groupId, String skip) throws InterruptedException {
         String url = buildUrl(memberId, groupId, skip);
         Request request = buildRequest(url);
 
         int retries = 0;
-        while (retries < MAX_RETRIES) {
+        while (retries < MAX_RETRIES) { // it is allowed to try max 5 times with the request
             try (Response response = client.newCall(request).execute()) {
                 if (response.isSuccessful()) {
                     return parseJsonToList(response);
@@ -79,38 +79,6 @@ public class RelationshipService {
             getAllRelationshipsByMemberIds(relationships, processedGroupIds); // we call this method until all groupIds are processed, until all group that are member in other groups are found
         }
         return relationships;
-    }
-
-    private String buildUrl(String memberId, String groupId, String skip) {
-        String url = "http://localhost:8080/api/relationships?filter=";
-        if(memberId!=null){
-            url += "memberId%3D" + memberId;
-        }
-
-        if(groupId!=null){
-            url += "groupId%3D" + groupId;
-        }
-
-        if(skip!=null){
-            url += "&skip=" + skip;
-        }
-        return url;
-    }
-
-    private Request buildRequest(String url) {
-        return new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", "Bearer " + AuthenticationService.bearerToken)
-                .build();
-    }
-
-    private List<Relationship> parseJsonToList(Response response) throws IOException{
-        List<Relationship> allRelationships = new ArrayList<>();
-        String responseBody = response.body().string();
-        Gson gson = new Gson();
-        Relationship[] relationshipsArray = gson.fromJson(responseBody, Relationship[].class); // parse all results to array from JSON
-        allRelationships.addAll(Arrays.asList(relationshipsArray));
-        return allRelationships;
     }
 
     public Collection<String> getAllMembersID(String groupId, List<String> ids, List<String> subGroupsIds) throws InterruptedException {
@@ -169,5 +137,37 @@ public class RelationshipService {
     private List<String> removeDuplicate(List<String> memberIds) {
         Set<String> set = new HashSet<>(memberIds);
         return new ArrayList<>(set);
+    }
+
+    private List<Relationship> parseJsonToList(Response response) throws IOException{
+        List<Relationship> allRelationships = new ArrayList<>();
+        String responseBody = response.body().string();
+        Gson gson = new Gson();
+        Relationship[] relationshipsArray = gson.fromJson(responseBody, Relationship[].class); // parse all results to array from JSON
+        allRelationships.addAll(Arrays.asList(relationshipsArray));
+        return allRelationships;
+    }
+
+    private Request buildRequest(String url) {
+        return new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + AuthenticationService.bearerToken)
+                .build();
+    }
+
+    private String buildUrl(String memberId, String groupId, String skip) {
+        String url = "http://localhost:8080/api/relationships?filter=";
+        if(memberId!=null){
+            url += "memberId%3D" + memberId;
+        }
+
+        if(groupId!=null){
+            url += "groupId%3D" + groupId;
+        }
+
+        if(skip!=null){
+            url += "&skip=" + skip;
+        }
+        return url;
     }
 }

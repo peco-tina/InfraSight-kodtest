@@ -7,9 +7,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class AccountService {
@@ -19,7 +17,7 @@ public class AccountService {
         this.client = client;
     }
 
-    private static final int MAX_RETRIES = 5;
+    private static final int MAX_RETRIES = 5; // number of allowed attempts of calling the API. Can be increased
     private static final double BACKOFF_FACTOR = 0.5;
     public Account findAccountById(String employeeId, String accountId) throws InterruptedException {
         String url = buildUrl(employeeId, accountId);
@@ -30,7 +28,7 @@ public class AccountService {
                 .build();
 
         int retries = 0;
-        while (retries < MAX_RETRIES) {
+        while (retries < MAX_RETRIES) { // it is allowed to try max 5 times with the request
             try (Response response = client.newCall(request).execute()) {
                 if (response.isSuccessful()) {
                     String responseBody = response.body().string();
@@ -42,7 +40,7 @@ public class AccountService {
                     }
                 } else if (response.code() == 429) {
                     retries++;
-                    double sleepTime = BACKOFF_FACTOR * Math.pow(2, retries);
+                    double sleepTime = BACKOFF_FACTOR * Math.pow(2, retries); // will wait some time and then try with call again
                     System.out.println("Rate limit exceeded. Retrying in " + sleepTime + " seconds...");
                     TimeUnit.SECONDS.sleep((long) sleepTime);
                 } else {
@@ -63,6 +61,32 @@ public class AccountService {
             accounts.add(findAccountById(null,accountId));
         }
         return accounts;
+    }
+
+    public Map<String, Long> calculateSalaries(List<Account> accounts){
+        Map<String, Long> salaries = new HashMap<>();
+        salaries.put("SEK", 0L);
+        salaries.put("DKK", 0L);
+        salaries.put("EUR", 0L);
+
+        for(Account account : accounts) {
+            if (account.isActive()) { // we do not calculate salaries for inactive accounts
+                if (account.getSalaryCurrency().equals("SEK")) {
+                    Long value = salaries.get("SEK");
+                    value += account.getSalary();
+                    salaries.put("SEK", value);
+                } else if (account.getSalaryCurrency().equals("DKK")) {
+                    Long value = salaries.get("DKK");
+                    value += account.getSalary();
+                    salaries.put("DKK", value);
+                } else {
+                    Long value = salaries.get("EUR");
+                    value += account.getSalary();
+                    salaries.put("EUR", value);
+                }
+            }
+        }
+        return salaries;
     }
 
     private String buildUrl(String employeeId, String accountId) {
