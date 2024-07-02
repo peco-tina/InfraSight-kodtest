@@ -94,7 +94,7 @@ public class RelationshipService {
         }
 
         boolean isListSizeChanged = true;
-        int skipCounter = 0;
+        int skipCounter = 0; // will be used for skip factor in url
         int listSize = 0;
         int previousListSize = 0;
 
@@ -104,32 +104,32 @@ public class RelationshipService {
             if(relationships != null){
                 allRelationships.addAll(relationships);
             }
-            previousListSize = listSize;
+            previousListSize = listSize; // after adding new relationships, list size will increase and we need also previous size to see in list size has been increased or we have got all relationships
             skipCounter += 50;
             listSize = allRelationships.size();
 
             if(previousListSize == listSize){
-                isListSizeChanged = false;
+                isListSizeChanged = false; // this means that all relationships are loaded
             }
 
-        } while (isListSizeChanged);
+        } while (isListSizeChanged); // until we get all relationships
 
-        for(Relationship relationship : allRelationships){
-            if(!relationship.getMemberId().substring(0,3).equals("acc") && !relationship.getMemberId().equals("vera_scope")){
+        for(Relationship relationship : allRelationships){ // because one group can be member in other groups we need people from subgroups also
+            if(!relationship.getMemberId().substring(0,3).equals("acc") && !relationship.getMemberId().equals("vera_scope")){ // all accounts start with acc which means if the start is not acc it is a group. vera_scope is hardcoded due to unique context
                 subGroups.add(relationship.getMemberId());
             } else {
                 memberIds.add(relationship.getMemberId());
             }
         }
 
-        for (String subGroupId : subGroups) {
+        for (String subGroupId : subGroups) { // we find all members in the subgroups
             List<String> temporarySubGroups = new ArrayList<>();
             temporarySubGroups.addAll(subGroups);
-            temporarySubGroups.remove(0);
+            temporarySubGroups.remove(0); // first subgroup is loaded in current loop and can be removed
             memberIds.addAll(getAllMembersID(subGroupId, memberIds, temporarySubGroups));
         }
 
-        memberIds = removeDuplicate(memberIds);
+        memberIds = removeDuplicate(memberIds); // because one account can be member in many groups
 
         return memberIds;
     }
