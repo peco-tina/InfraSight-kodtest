@@ -101,4 +101,14 @@ public class AccountService {
         }
         return url;
     }
+
+    public Collection<?> filterAccountsByEmploymentStartDate(List<Account> saljareAccounts, int firstStartDate, int lastStardDate) {
+        List<Account> tempList = new ArrayList<>();
+        for(Account account : saljareAccounts){
+            if(account.getEmployedSince() >= firstStartDate && account.getEmployedSince() <= lastStardDate){
+                tempList.add(account);
+            }
+        }
+        return tempList;
+    }
 }

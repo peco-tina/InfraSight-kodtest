@@ -102,10 +102,68 @@ public class Tests extends TestsSetup {
 	@Test
 	public void assignment5() throws InterruptedException {
 		assertTrue(serverUp);
+		List<String> saljareMembersId = new ArrayList<>(relationshipService.getAllMembersID("grp_saljare", null, null));
+		List<String> malmoMembersId = new ArrayList<>(relationshipService.getAllMembersID("grp_malmo", null, null));
+		List<String> stockholmMembersId = new ArrayList<>(relationshipService.getAllMembersID("grp_stockholm", null, null));
+		List<String> goteborgMembersId = new ArrayList<>(relationshipService.getAllMembersID("grp_goteborg", null, null));
+		List<String> cheferMembersId = new ArrayList<>(relationshipService.getAllMembersID("grp_chefer", null, null));
+		List<String> allSwedishMembersId = new ArrayList<>();
 
-		/**
-		 * TODO: Add code to solve the fifth assignment. Add Asserts to verify the
-		 * managers requested
-		 */
+		allSwedishMembersId.addAll(malmoMembersId);
+		allSwedishMembersId.addAll(stockholmMembersId);
+		allSwedishMembersId.addAll(goteborgMembersId);
+
+		//Lines bellow are used to separate säljare from other employees by Region
+		List<String> saljareFromMalmoMembersId = new ArrayList<>(saljareMembersId);
+		saljareFromMalmoMembersId.retainAll(malmoMembersId);
+
+		List<String> saljareFromStockholmMembersId = new ArrayList<>(saljareMembersId);
+		saljareFromStockholmMembersId.retainAll(stockholmMembersId);
+
+		List<String> saljareFromGoteborgMembersId = new ArrayList<>(saljareMembersId);
+		saljareFromGoteborgMembersId.retainAll(goteborgMembersId);
+
+		//Lines bellow are used to separate chefer from other employees by Region
+		List<String> cheferFromSwedenMembersId = new ArrayList<>(cheferMembersId);
+		cheferFromSwedenMembersId.retainAll(allSwedishMembersId);
+
+		List<String> cheferFromMalmoMembersId = new ArrayList<>(cheferFromSwedenMembersId);
+		cheferFromMalmoMembersId.retainAll(malmoMembersId);
+
+		List<String> cheferFromGoteborgMembersId = new ArrayList<>(cheferFromSwedenMembersId);
+		cheferFromGoteborgMembersId.retainAll(goteborgMembersId);
+
+		List<String> cheferFromStockholmMembersId = new ArrayList<>(cheferFromSwedenMembersId);
+		cheferFromStockholmMembersId.retainAll(stockholmMembersId);
+
+		//Lines bellow fetch all accounts for säljare in Sweden, it is necessary in order to check when they started work on their positions
+		List<Account> saljareFromMalmoAccounts = new ArrayList<>(accountService.getAllAccountsById(saljareFromMalmoMembersId));
+		List<Account> saljareFromGoteborgAccounts = new ArrayList<>(accountService.getAllAccountsById(saljareFromGoteborgMembersId));
+		List<Account> saljareFromStockholmAccounts = new ArrayList<>(accountService.getAllAccountsById(saljareFromStockholmMembersId));
+
+		int firstStartDate = 1546297200; // 1.1.2019. 00:00:00
+		int lastStardDate = 1672527599; // 31.12.2022. 23:59:59
+
+		//Lines bellow are will keep only accounts that are owned by employees who started between 1.1.2019. 00:00:00 and 31.12.2022. 23:59:59
+		saljareFromMalmoAccounts.retainAll(accountService.filterAccountsByEmploymentStartDate(saljareFromMalmoAccounts, firstStartDate, lastStardDate));
+		saljareFromGoteborgAccounts.retainAll(accountService.filterAccountsByEmploymentStartDate(saljareFromGoteborgAccounts, firstStartDate, lastStardDate));
+		saljareFromStockholmAccounts.retainAll(accountService.filterAccountsByEmploymentStartDate(saljareFromStockholmAccounts, firstStartDate, lastStardDate));
+
+		//To find names all of chefer
+		List<Account> cheferFromMalmoAccounts = new ArrayList<>(accountService.getAllAccountsById(cheferFromMalmoMembersId));
+		List<Account> cheferFromGoteborgAccounts = new ArrayList<>(accountService.getAllAccountsById(cheferFromGoteborgMembersId));
+		List<Account> cheferFromStockholmAccounts = new ArrayList<>(accountService.getAllAccountsById(cheferFromStockholmMembersId));
+
+		assertTrue(cheferFromMalmoAccounts.get(0).getFirstName().equals("Rasmus") && cheferFromMalmoAccounts.get(0).getLastName().equals("Persson")); // Chefer in Malmö
+		assertTrue(cheferFromMalmoAccounts.get(1).getFirstName().equals("Anna") && cheferFromMalmoAccounts.get(1).getLastName().equals("Gunnarsson"));
+		assertTrue(cheferFromMalmoAccounts.get(2).getFirstName().equals("Agnes") && cheferFromMalmoAccounts.get(2).getLastName().equals("Nordström"));
+
+		assertTrue(cheferFromGoteborgAccounts.get(0).getFirstName().equals("Saga") && cheferFromGoteborgAccounts.get(0).getLastName().equals("Berggren")); // Chefer in Göteborg
+		assertTrue(cheferFromGoteborgAccounts.get(1).getFirstName().equals("Julia") && cheferFromGoteborgAccounts.get(1).getLastName().equals("Håkansson"));
+		assertTrue(cheferFromGoteborgAccounts.get(2).getFirstName().equals("Emelie") && cheferFromGoteborgAccounts.get(2).getLastName().equals("Gustavsson"));
+
+		assertTrue(cheferFromStockholmAccounts.get(0).getFirstName().equals("Karl") && cheferFromStockholmAccounts.get(0).getLastName().equals("Bengtsson")); // Chefer in Stockholm
+		assertTrue(cheferFromStockholmAccounts.get(1).getFirstName().equals("Julia") && cheferFromStockholmAccounts.get(1).getLastName().equals("Björnsson"));
+		assertTrue(cheferFromStockholmAccounts.get(2).getFirstName().equals("Sten") && cheferFromStockholmAccounts.get(2).getLastName().equals("Ekström"));
 	}
 }
