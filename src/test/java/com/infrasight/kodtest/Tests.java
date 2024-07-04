@@ -4,9 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.infrasight.kodtest.model.Account;
+import com.infrasight.kodtest.model.Group;
 import com.infrasight.kodtest.model.Relationship;
 import com.infrasight.kodtest.service.AccountService;
 import com.infrasight.kodtest.service.AuthenticationService;
+import com.infrasight.kodtest.service.GroupService;
 import com.infrasight.kodtest.service.RelationshipService;
 import okhttp3.OkHttpClient;
 import org.junit.BeforeClass;
@@ -29,6 +31,7 @@ public class Tests extends TestsSetup {
 	private static final OkHttpClient okHttpClient = getHttpClientBuilder().build();
 	private static final AccountService accountService = new AccountService(okHttpClient);
 	private static final RelationshipService relationshipService = new RelationshipService(okHttpClient);
+	private static final GroupService groupService = new GroupService(okHttpClient);
 	private static List<Relationship> allRelationships;
 
 	/**
@@ -49,7 +52,7 @@ public class Tests extends TestsSetup {
 	public void assignment1() throws InterruptedException {
 		assertTrue(serverUp);
 		String employeeId = "1337";
-		Account account = accountService.findAccountById(employeeId, null);
+		Account account = accountService.getAccountById(employeeId, null);
 		assertEquals("Vera", account.getFirstName());
 		assertEquals("Scope", account.getLastName());
 	}
@@ -71,23 +74,30 @@ public class Tests extends TestsSetup {
 		List<String> processedGroupIds = new ArrayList<>();
 		allRelationships = relationshipService.getAllRelationshipsByMemberIds(allRelationships, processedGroupIds);
 
-		assertEquals(9, allRelationships.size());
-		assertEquals(allRelationships.get(0).getGroupId(), ("grp_köpenhamn"));
-		assertEquals(allRelationships.get(1).getGroupId(), ("grp_malmo"));
-		assertEquals(allRelationships.get(2).getGroupId(), ("grp_itkonsulter"));
-		assertEquals(allRelationships.get(3).getGroupId(), ("grp_danmark"));
-		assertEquals(allRelationships.get(4).getGroupId(), ("grp_sverige"));
-		assertEquals(allRelationships.get(5).getGroupId(), ("grp_inhyrda"));
-		assertEquals(allRelationships.get(6).getGroupId(), ("grp_chokladfabrik"));
-		assertEquals(allRelationships.get(7).getGroupId(), ("grp_choklad"));
-		assertEquals(allRelationships.get(8).getGroupId(), ("grp_konfektyr"));
+		List<String> groupIds = new ArrayList<>();
+		for(Relationship relationship : allRelationships){
+			groupIds.add(relationship.getGroupId());
+		}
+
+		List<Group> groups = groupService.getAllGroupsByIds(groupIds);
+
+		assertEquals(9, groups.size());
+		assertEquals(groups.get(0).getName(), ("Köpenhamn"));
+		assertEquals(groups.get(1).getName(), ("Malmö"));
+		assertEquals(groups.get(2).getName(), ("IT-Konsulter"));
+		assertEquals(groups.get(3).getName(), ("Danmark"));
+		assertEquals(groups.get(4).getName(), ("Sverige"));
+		assertEquals(groups.get(5).getName(), ("Inhyrda"));
+		assertEquals(groups.get(6).getName(), ("Chokladfabrik AB"));
+		assertEquals(groups.get(7).getName(), ("Choklad"));
+		assertEquals(groups.get(8).getName(), ("Konfektyr"));
 	}
 
 	@Test
 	public void assignment4() throws InterruptedException {
 		assertTrue(serverUp);
-		List<String> membersId = new ArrayList<>(relationshipService.getAllMembersID("grp_inhyrda", null, null));
-		List<Account> accounts = new ArrayList<>(accountService.getAllAccountsById(membersId));
+		List<String> memberIds = new ArrayList<>(relationshipService.getAllMemberIds("grp_inhyrda", null, null));
+		List<Account> accounts = new ArrayList<>(accountService.getAllAccountsByIds(memberIds));
 		Map<String, Long> salaries = new HashMap<>(accountService.calculateSalaries(accounts));
 
 		long totalSalariesInSEK = salaries.get("SEK");
@@ -102,44 +112,44 @@ public class Tests extends TestsSetup {
 	@Test
 	public void assignment5() throws InterruptedException {
 		assertTrue(serverUp);
-		List<String> saljareMembersId = new ArrayList<>(relationshipService.getAllMembersID("grp_saljare", null, null));
-		List<String> malmoMembersId = new ArrayList<>(relationshipService.getAllMembersID("grp_malmo", null, null));
-		List<String> stockholmMembersId = new ArrayList<>(relationshipService.getAllMembersID("grp_stockholm", null, null));
-		List<String> goteborgMembersId = new ArrayList<>(relationshipService.getAllMembersID("grp_goteborg", null, null));
-		List<String> cheferMembersId = new ArrayList<>(relationshipService.getAllMembersID("grp_chefer", null, null));
-		List<String> allSwedishMembersId = new ArrayList<>();
+		List<String> saljareMemberIds = new ArrayList<>(relationshipService.getAllMemberIds("grp_saljare", null, null));
+		List<String> malmoMemberIds = new ArrayList<>(relationshipService.getAllMemberIds("grp_malmo", null, null));
+		List<String> stockholmMemberIds = new ArrayList<>(relationshipService.getAllMemberIds("grp_stockholm", null, null));
+		List<String> goteborgMemberIds = new ArrayList<>(relationshipService.getAllMemberIds("grp_goteborg", null, null));
+		List<String> cheferMemberIds = new ArrayList<>(relationshipService.getAllMemberIds("grp_chefer", null, null));
+		List<String> allSwedishMemberIds = new ArrayList<>();
 
-		allSwedishMembersId.addAll(malmoMembersId);
-		allSwedishMembersId.addAll(stockholmMembersId);
-		allSwedishMembersId.addAll(goteborgMembersId);
+		allSwedishMemberIds.addAll(malmoMemberIds);
+		allSwedishMemberIds.addAll(stockholmMemberIds);
+		allSwedishMemberIds.addAll(goteborgMemberIds);
 
 		//Lines bellow are used to separate säljare from other employees by Region
-		List<String> saljareFromMalmoMembersId = new ArrayList<>(saljareMembersId);
-		saljareFromMalmoMembersId.retainAll(malmoMembersId);
+		List<String> saljareFromMalmoMemberIds = new ArrayList<>(saljareMemberIds);
+		saljareFromMalmoMemberIds.retainAll(malmoMemberIds);
 
-		List<String> saljareFromStockholmMembersId = new ArrayList<>(saljareMembersId);
-		saljareFromStockholmMembersId.retainAll(stockholmMembersId);
+		List<String> saljareFromStockholmMemberIds = new ArrayList<>(saljareMemberIds);
+		saljareFromStockholmMemberIds.retainAll(stockholmMemberIds);
 
-		List<String> saljareFromGoteborgMembersId = new ArrayList<>(saljareMembersId);
-		saljareFromGoteborgMembersId.retainAll(goteborgMembersId);
+		List<String> saljareFromGoteborgMemberIds = new ArrayList<>(saljareMemberIds);
+		saljareFromGoteborgMemberIds.retainAll(goteborgMemberIds);
 
 		//Lines bellow are used to separate chefer from other employees by Region
-		List<String> cheferFromSwedenMembersId = new ArrayList<>(cheferMembersId);
-		cheferFromSwedenMembersId.retainAll(allSwedishMembersId);
+		List<String> cheferFromSwedenMemberIds = new ArrayList<>(cheferMemberIds);
+		cheferFromSwedenMemberIds.retainAll(allSwedishMemberIds);
 
-		List<String> cheferFromMalmoMembersId = new ArrayList<>(cheferFromSwedenMembersId);
-		cheferFromMalmoMembersId.retainAll(malmoMembersId);
+		List<String> cheferFromMalmoMemberIds = new ArrayList<>(cheferFromSwedenMemberIds);
+		cheferFromMalmoMemberIds.retainAll(malmoMemberIds);
 
-		List<String> cheferFromGoteborgMembersId = new ArrayList<>(cheferFromSwedenMembersId);
-		cheferFromGoteborgMembersId.retainAll(goteborgMembersId);
+		List<String> cheferFromGoteborgMemberIds = new ArrayList<>(cheferFromSwedenMemberIds);
+		cheferFromGoteborgMemberIds.retainAll(goteborgMemberIds);
 
-		List<String> cheferFromStockholmMembersId = new ArrayList<>(cheferFromSwedenMembersId);
-		cheferFromStockholmMembersId.retainAll(stockholmMembersId);
+		List<String> cheferFromStockholmMemberIds = new ArrayList<>(cheferFromSwedenMemberIds);
+		cheferFromStockholmMemberIds.retainAll(stockholmMemberIds);
 
 		//Lines bellow fetch all accounts for säljare in Sweden, it is necessary in order to check when they started work on their positions
-		List<Account> saljareFromMalmoAccounts = new ArrayList<>(accountService.getAllAccountsById(saljareFromMalmoMembersId));
-		List<Account> saljareFromGoteborgAccounts = new ArrayList<>(accountService.getAllAccountsById(saljareFromGoteborgMembersId));
-		List<Account> saljareFromStockholmAccounts = new ArrayList<>(accountService.getAllAccountsById(saljareFromStockholmMembersId));
+		List<Account> saljareFromMalmoAccounts = new ArrayList<>(accountService.getAllAccountsByIds(saljareFromMalmoMemberIds));
+		List<Account> saljareFromGoteborgAccounts = new ArrayList<>(accountService.getAllAccountsByIds(saljareFromGoteborgMemberIds));
+		List<Account> saljareFromStockholmAccounts = new ArrayList<>(accountService.getAllAccountsByIds(saljareFromStockholmMemberIds));
 
 		int firstStartDate = 1546297200; // 1.1.2019. 00:00:00
 		int lastStardDate = 1672527599; // 31.12.2022. 23:59:59
@@ -149,10 +159,10 @@ public class Tests extends TestsSetup {
 		saljareFromGoteborgAccounts.retainAll(accountService.filterAccountsByEmploymentStartDate(saljareFromGoteborgAccounts, firstStartDate, lastStardDate));
 		saljareFromStockholmAccounts.retainAll(accountService.filterAccountsByEmploymentStartDate(saljareFromStockholmAccounts, firstStartDate, lastStardDate));
 
-		//To find names all of chefer
-		List<Account> cheferFromMalmoAccounts = new ArrayList<>(accountService.getAllAccountsById(cheferFromMalmoMembersId));
-		List<Account> cheferFromGoteborgAccounts = new ArrayList<>(accountService.getAllAccountsById(cheferFromGoteborgMembersId));
-		List<Account> cheferFromStockholmAccounts = new ArrayList<>(accountService.getAllAccountsById(cheferFromStockholmMembersId));
+		//To find names of all chefer
+		List<Account> cheferFromMalmoAccounts = new ArrayList<>(accountService.getAllAccountsByIds(cheferFromMalmoMemberIds));
+		List<Account> cheferFromGoteborgAccounts = new ArrayList<>(accountService.getAllAccountsByIds(cheferFromGoteborgMemberIds));
+		List<Account> cheferFromStockholmAccounts = new ArrayList<>(accountService.getAllAccountsByIds(cheferFromStockholmMemberIds));
 
 		assertTrue(cheferFromMalmoAccounts.get(0).getFirstName().equals("Rasmus") && cheferFromMalmoAccounts.get(0).getLastName().equals("Persson")); // Chefer in Malmö
 		assertTrue(cheferFromMalmoAccounts.get(1).getFirstName().equals("Anna") && cheferFromMalmoAccounts.get(1).getLastName().equals("Gunnarsson"));

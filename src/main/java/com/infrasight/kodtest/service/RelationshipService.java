@@ -81,7 +81,7 @@ public class RelationshipService {
         return relationships;
     }
 
-    public Collection<String> getAllMembersID(String groupId, List<String> ids, List<String> subGroupsIds) throws InterruptedException {
+    public Collection<String> getAllMemberIds(String groupId, List<String> ids, List<String> subGroupsIds) throws InterruptedException {
         List<Relationship> allRelationships = new ArrayList<>();
         List<String> subGroups = new ArrayList<>();
         List<String> memberIds = new ArrayList<>();
@@ -126,7 +126,7 @@ public class RelationshipService {
             List<String> temporarySubGroups = new ArrayList<>();
             temporarySubGroups.addAll(subGroups);
             temporarySubGroups.remove(0); // first subgroup is loaded in current loop and can be removed
-            memberIds.addAll(getAllMembersID(subGroupId, memberIds, temporarySubGroups));
+            memberIds.addAll(getAllMemberIds(subGroupId, memberIds, temporarySubGroups));
         }
 
         memberIds = removeDuplicate(memberIds); // because one account can be member in many groups

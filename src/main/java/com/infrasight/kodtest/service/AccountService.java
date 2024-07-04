@@ -19,13 +19,10 @@ public class AccountService {
 
     private static final int MAX_RETRIES = 5; // number of allowed attempts of calling the API. Can be increased
     private static final double BACKOFF_FACTOR = 0.5;
-    public Account findAccountById(String employeeId, String accountId) throws InterruptedException {
+    public Account getAccountById(String employeeId, String accountId) throws InterruptedException {
         String url = buildUrl(employeeId, accountId);
 
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", "Bearer " + AuthenticationService.bearerToken)
-                .build();
+        Request request = buildRequest(url);
 
         int retries = 0;
         while (retries < MAX_RETRIES) { // it is allowed to try max 5 times with the request
@@ -55,10 +52,10 @@ public class AccountService {
         return null;
     }
 
-    public Collection<? extends Account> getAllAccountsById(List<String> accountsId) throws InterruptedException {
+    public Collection<? extends Account> getAllAccountsByIds(List<String> accountsId) throws InterruptedException {
         List<Account> accounts = new ArrayList<>();
         for(String accountId : accountsId){
-            accounts.add(findAccountById(null,accountId));
+            accounts.add(getAccountById(null,accountId));
         }
         return accounts;
     }
@@ -89,6 +86,16 @@ public class AccountService {
         return salaries;
     }
 
+    public Collection<?> filterAccountsByEmploymentStartDate(List<Account> saljareAccounts, int firstStartDate, int lastStardDate) {
+        List<Account> tempList = new ArrayList<>();
+        for(Account account : saljareAccounts){
+            if(account.getEmployedSince() >= firstStartDate && account.getEmployedSince() <= lastStardDate){
+                tempList.add(account);
+            }
+        }
+        return tempList;
+    }
+
     private String buildUrl(String employeeId, String accountId) {
         String url = "http://localhost:8080/api/accounts?filter=";
 
@@ -102,13 +109,10 @@ public class AccountService {
         return url;
     }
 
-    public Collection<?> filterAccountsByEmploymentStartDate(List<Account> saljareAccounts, int firstStartDate, int lastStardDate) {
-        List<Account> tempList = new ArrayList<>();
-        for(Account account : saljareAccounts){
-            if(account.getEmployedSince() >= firstStartDate && account.getEmployedSince() <= lastStardDate){
-                tempList.add(account);
-            }
-        }
-        return tempList;
+    private Request buildRequest(String url) {
+        return  new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + AuthenticationService.bearerToken)
+                .build();
     }
 }
