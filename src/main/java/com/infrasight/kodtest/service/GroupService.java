@@ -1,7 +1,6 @@
 package com.infrasight.kodtest.service;
 
 import com.google.gson.Gson;
-import com.infrasight.kodtest.model.Account;
 import com.infrasight.kodtest.model.Group;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
